@@ -63,20 +63,28 @@ input,textarea,select{width:100%;padding:9px;border:1px solid #cbd5e1;border-rad
 .a4-foot{display:flex;justify-content:space-between;padding:12px;font-size:9px;line-height:1.5;color:#000!important}
 
 @media print{
-  @page{size:A4;margin:6mm}
+  @page{size:A4;margin:4mm}
   header,.left,.no-print{display:none!important}
-  body{background:#fff}
- .app{display:block}
- .right{background:#fff;padding:0;gap:0}
- .a4{width:100%!important;box-shadow:none!important;margin:0 0 10px 0!important;border:1px solid #000!important;page-break-after:always!important;page-break-inside:avoid!important;break-inside:avoid!important;transform:none!important;zoom:1!important}
- .a4:last-child{page-break-after:auto!important}
-}
-/* PRINT COLOR FIX - 100% DARK */
-@media print{
+  html,body{background:#fff!important;width:100%!important;height:auto!important;overflow:visible!important}
+  .app{display:block!important;max-width:100%!important}
+  .right{background:#fff!important;padding:0!important;gap:0!important;display:block!important;width:100%!important}
+  .a4{
+    width:100%!important;
+    max-width:100%!important;
+    box-shadow:none!important;
+    margin:0 0 8px 0!important;
+    border:1px solid #000!important;
+    page-break-after:always!important;
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+    transform:none!important;
+    zoom:1!important;
+    font-size:9px!important;
+  }
+  .a4:last-child{page-break-after:auto!important}
   *{
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
   }
 }
 /* MOBILE FIX - Header full width */
@@ -209,7 +217,7 @@ function draw(){
    <div class="a4-total"><div><div><b style="font-size:8px;text-transform:uppercase">Amount in Words</b><br><b>INR ${inWords(grand)} Only</b></div><div style="margin-top:8px"><b style="font-size:8px;text-transform:uppercase">Tax Amount in Words</b><br>INR ${inWords(totalTax)} Only</div></div><div style="background:#f8fafc"><div style="display:flex;justify-content:space-between"><span>Taxable</span><span>₹${total.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>CGST</span><span>₹${(totalTax/2).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>SGST</span><span>₹${(totalTax/2).toFixed(2)}</span></div><div class="a4-grand"><span>Grand Total</span><span>₹${grand.toFixed(2)}</span></div></div></div>
    <div style="font-size:8px;font-weight:800;background:#f8fafc;border:1px solid #000;border-bottom:none;padding:6px 10px;margin:10px 12px 0 12px;width:calc(100% - 24px)">TAX SUMMARY - HSN/SAC & GST RATE WISE</div>
    <table><tr><th>HSN/SAC</th><th>Taxable</th><th>CGST Amt</th><th>CGST %</th><th>SGST Amt</th><th>SGST %</th><th>Total Tax</th></tr>${taxRows}<tr class="b" style="background:#f8fafc"><td>Total</td><td class="r">${total.toFixed(2)}</td><td class="r">${(totalTax/2).toFixed(2)}</td><td></td><td class="r">${(totalTax/2).toFixed(2)}</td><td></td><td class="r">₹${totalTax.toFixed(2)}</td></tr></table>
-   <div class="a4-foot"><div style="width:60%"><br><br><br><br>j<span style="background:#000;color:#fff!important;padding:2px 6px;border-radius:3px;font-size:7px">Declaration • We declare that this invoice shows actual price.</span></div><div style="text-align:right"><div>for <b>${gv('vName')}</b></div><br><br><br><div style="border-top:1px solid #000;padding-top:5px"><b>Authorised Signatory</b></div></div></div>
+   <div class="a4-foot"><div style="width:60%"><span style="background:#000;color:#fff!important;padding:2px 6px;border-radius:3px;font-size:7px">Declaration • We declare that this invoice shows actual price.</span></div><div style="text-align:right"><div>for <b>${gv('vName')}</b></div><br><br><br><div style="border-top:1px solid #000;padding-top:5px"><b>Authorised Signatory</b></div></div></div>
   </div>`;
  });
  document.getElementById('printArea').innerHTML=html;
