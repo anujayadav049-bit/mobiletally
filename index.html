@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Tally Billing </title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}
+body{background:#eef2f7;color:#000}
+header{background:#0f172a;color:#fff;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20}
+.btn{padding:8px 14px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:12px}
+.btn-w{background:#fff;color:#000}.btn-g{background:#22c55e;color:#000}
+.app{max-width:1450px;margin:0 auto;display:grid;grid-template-columns:360px 1fr}
+@media(max-width:980px){.app{grid-template-columns:1fr}}
+.left{background:#fff;padding:12px;border-right:1px solid #e2e8f0;height:100vh;overflow:auto}
+@media(max-width:980px){.left{height:auto}}
+.right{background:#cbd5e1;padding:20px;display:flex;flex-direction:column;gap:20px;align-items:center}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:12px}
+.card h3{font-size:10px;background:#0f172a;color:#fff;padding:6px 9px;border-radius:6px;margin-bottom:10px}
+label{font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;margin-top:8px;display:block}
+input,textarea,select{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;background:#fff;color:#000}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini{display:flex;gap:6px;margin-top:8px}.mini button{font-size:11px;padding:5px 10px;border-radius:20px;border:1px solid #cbd5e1;background:#fff;font-weight:600}.mini button.primary{background:#0f172a;color:#fff}
+
+/* --- FINAL INVOICE - COLOR FIX + 1 PAGE --- */
+.a4{width:800px;max-width:100%;background:#fff;border:1px solid #000;color:#000;box-shadow:0 8px 20px rgba(0,0,0,.1);page-break-inside:avoid;break-inside:avoid}
+.a4 *{color:#000!important}
+.a4-top{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #000;background:#fff}
+.a4-top b{font-size:15px;font-weight:800;letter-spacing:.8px;color:#000!important}
+.a4-top span{font-size:8px;font-weight:800;border:1px solid #000;padding:3px 7px;border-radius:3px;background:#fff;color:#000!important}
+.a4-box{border:1px solid #000;margin:10px 12px 0 12px}
+.a4-row{display:grid;grid-template-columns:1fr 250px}
+.a4-row>div{padding:10px 12px;color:#000}
+.a4-row>div:first-child{border-right:1px solid #000}
+.a4-b{font-size:13px;font-weight:800;color:#000!important}
+.a4-meta{font-size:10.5px;line-height:1.6;color:#000!important;margin-top:4px}
+.a4-party{display:grid;grid-template-columns:1fr 1fr;border:1px solid #000;margin:10px 12px 0 12px}
+.a4-party>div{padding:10px 12px;line-height:1.6;font-size:10.5px;color:#000!important}
+.a4-party>div:first-child{border-right:1px solid #000}
+
+.a4-head{
+  font-size:9px !important;
+  background:#000 !important;
+  color:#fff !important;
+  padding:4px 8px !important;
+  border-radius:0 !important;
+  display:inline-block !important;
+  margin-bottom:8px !important;
+  font-weight:800 !important;
+  letter-spacing:.6px !important;
+  text-transform:uppercase !important;
+  border:1px solid #000 !important;
+}
+.a4 table{width:100%;border-collapse:collapse;border:1px solid #000;margin:10px 12px 0 12px;width:calc(100% - 24px)}
+.a4 th{background:#f1f5f9!important;font-size:8.5px;text-transform:uppercase;border:1px solid #000;padding:6px 6px;color:#000!important}
+.a4 td{border:1px solid #000;padding:6px 7px;font-size:10px;color:#000!important;line-height:1.4}
+.r{text-align:right}.c{text-align:center}.b{font-weight:800}
+.a4-total{display:grid;grid-template-columns:1fr 270px;border:1px solid #000;margin:10px 12px 0 12px}
+.a4-total>div{padding:10px 12px;font-size:10.5px;color:#000!important;line-height:1.5}
+.a4-total>div:first-child{border-right:1px solid #000}
+.a4-grand{font-size:13px;font-weight:800;display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:8px;padding-top:8px;color:#000!important}
+.a4-foot{display:flex;justify-content:space-between;padding:12px;font-size:9px;line-height:1.5;color:#000!important}
+
+@media print{
+  @page{size:A4;margin:6mm}
+  header,.left,.no-print{display:none!important}
+  body{background:#fff}
+ .app{display:block}
+ .right{background:#fff;padding:0;gap:0}
+ .a4{width:100%!important;box-shadow:none!important;margin:0 0 10px 0!important;border:1px solid #000!important;page-break-after:always!important;page-break-inside:avoid!important;break-inside:avoid!important;transform:none!important;zoom:1!important}
+ .a4:last-child{page-break-after:auto!important}
+}
+/* PRINT COLOR FIX - 100% DARK */
+@media print{
+  *{
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
+</style>
+</head>
+<body>
+<header class="no-print">
+  <b>MOBILE TALLY BILLING </b>
+  <div style="display:flex;gap:8px"><button class="btn btn-w" onclick="addProd()">+ Product</button><button class="btn btn-g" onclick="window.print()">Print</button></div>
+</header>
+<div class="app">
+<div class="left no-print">
+  <div class="card"><h3>VENDOR</h3><select id="vendorDropdown" onchange="loadVendor()"><option value="">-- Select Vendor --</option></select><div class="mini"><button onclick="saveParty('vendor')" class="primary">Save</button><button onclick="deleteParty('vendor')">Delete</button></div><label>Name</label><input id="vName" value="Industrial Equipment Solutions"><label>Address</label><textarea id="vAddr" rows="2">Plot No.: 428 Sector -33, Near Hero Honda Chowk, Gurugram-122001</textarea><div class="grid2"><div><label>GSTIN</label><input id="vGst" value="06AAJPP0227K1ZZ"></div><div><label>Code</label><input id="vCode" value="06"></div></div><label>State</label><input id="vState" value="Haryana"><label>Email</label><input id="vEmail" value="industrialequipment06@gmail.com"></div>
+  <div class="card"><h3>BUYER</h3><select id="buyerDropdown" onchange="loadBuyer()"><option value="">-- Select Customer --</option></select><div class="mini"><button onclick="saveParty('buyer')" class="primary">Save</button><button onclick="deleteParty('buyer')">Delete</button></div><label>Buyer</label><input id="bName" value="NAPINO CONTROL SYSTEMS PRIVATE LIMITED"><label>Address</label><textarea id="bAddr" rows="2">Plot No. 131, Sector - 8 IMT Manesar, Gurugram-122050</textarea><div class="grid2"><div><label>GSTIN</label><input id="bGst" value="06AAFCN7059L1Z0"></div><div><label>Code</label><input id="bCode" value="06"></div></div><label>State</label><input id="bState" value="Haryana"><label style="display:flex;gap:6px;align-items:center;margin-top:8px;text-transform:none;font-size:12px"><input type="checkbox" id="sameAs" checked onchange="copyBuyer()" style="width:auto"> Same as Buyer</label><input id="cName" placeholder="Consignee Name"><textarea id="cAddr" placeholder="Consignee Address" rows="2"></textarea></div>
+  <div class="card"><h3>INVOICE</h3><div class="grid2"><div><label>No</label><input id="iNo" value="IDE/2025-26/169"></div><div><label>Date</label><input type="date" id="iDate"></div></div><div class="grid2"><div><label>Payment</label><input id="iPay" value="30 days"></div><div><label>Order</label><input id="iOrder" value="2019000232"></div></div><label>Dispatch</label><input id="iDisp" value="By Porter"><label>Dest</label><input id="iDest" value="Gurugram"></div>
+  <div class="card"><h3>PRODUCTS</h3><div id="prodForm"></div><button onclick="addProd()" style="width:100%;padding:10px;background:#0f172a;color:#fff;border-radius:8px;margin-top:8px;font-weight:700;border:none">+ Add Product</button></div>
+</div>
+<div class="right" id="printArea"></div>
+</div>
+<script>
+let prods=[{name:'MS Fabrication Work',desc:'Labour & Job Work',hsn:'9988',qty:1,rate:15000,gst:18,per:'Nos'},{name:'Material Supply',desc:'Steel Plate 5mm',hsn:'7210',qty:2,rate:1000,gst:18,per:'Nos'}];
+function addProd(){prods.push({name:'',desc:'',hsn:'',qty:1,rate:0,gst:18,per:'Nos'});render()}
+function delProd(i){prods.splice(i,1);render()}
+function renderForm(){let f=document.getElementById('prodForm');f.innerHTML='';prods.forEach((p,i)=>{f.innerHTML+=`<div style="border:1px dashed #94a3b8;padding:10px;border-radius:10px;margin-bottom:8px;background:#f8fafc"><div style="display:flex;justify-content:space-between"><b>Item ${i+1}</b><button onclick="delProd(${i})" style="color:red;background:#fee2e2;border:none;padding:3px 8px;border-radius:10px;font-size:11px">Remove</button></div><input placeholder="Name" value="${p.name}" oninput="prods[${i}].name=this.value;draw()"><textarea placeholder="Description" rows="1" oninput="prods[${i}].desc=this.value;draw()" style="margin-top:6px">${p.desc}</textarea><div class="grid2" style="margin-top:6px"><input placeholder="HSN" value="${p.hsn}" oninput="prods[${i}].hsn=this.value;draw()"><select onchange="prods[${i}].gst=parseFloat(this.value);draw()"><option value="0" ${p.gst==0?'selected':''}>0%</option><option value="5" ${p.gst==5?'selected':''}>5%</option><option value="12" ${p.gst==12?'selected':''}>12%</option><option value="18" ${p.gst==18?'selected':''}>18%</option><option value="28" ${p.gst==28?'selected':''}>28%</option></select></div><div class="grid2" style="margin-top:6px"><input type="number" value="${p.qty}" oninput="prods[${i}].qty=parseFloat(this.value)||0;draw()"><input type="number" value="${p.rate}" oninput="prods[${i}].rate=parseFloat(this.value)||0;draw()"></div></div>`})}
+function inWords(n){const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'],b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];function w(num){if(num<20)return a[num];if(num<100)return b[Math.floor(num/10)]+(num%10?' '+a[num%10]:'');if(num<1000)return a[Math.floor(num/100)]+' Hundred'+(num%100?' '+w(num%100):'');if(num<100000)return w(Math.floor(num/1000))+' Thousand'+(num%1000?' '+w(num%1000):'');if(num<10000000)return w(Math.floor(num/100000))+' Lakh'+(num%100000?' '+w(num%100000):'');return w(Math.floor(num/10000000))+' Crore'+(num%10000000?' '+w(num%10000000):'')}n=Math.round(n);return n==0?'Zero':w(n).trim()}
+function draw(){
+ let gv=id=>document.getElementById(id).value;
+ let total=0,totalTax=0,totalQty=0,taxGroups={},rows='';
+ prods.forEach((p,i)=>{
+  let amt=p.qty*p.rate; total+=amt; totalQty+=p.qty; let tax=amt*p.gst/100; totalTax+=tax;
+  let k=(p.hsn||'NA')+'_'+p.gst; if(!taxGroups[k]) taxGroups[k]={hsn:p.hsn||'NA',gst:p.gst,taxable:0}; taxGroups[k].taxable+=amt;
+  rows+=`<tr><td class="c">${i+1}</td><td><b>${p.name||'Product'}</b><br><span style="font-size:9px">${p.desc||''}</span></td><td class="c">${p.hsn||'-'}</td><td class="c">${p.qty}</td><td class="c">${p.per}</td><td class="r">₹${p.rate.toFixed(2)}</td><td class="r"><b>₹${amt.toFixed(2)}</b></td></tr>`;
+ });
+ let grand=total+totalTax;
+ let taxRows=''; Object.values(taxGroups).forEach(g=>{
+  let c=g.taxable*g.gst/2/100;
+  taxRows+=`<tr><td>${g.hsn}</td><td class="r">${g.taxable.toFixed(2)}</td><td class="r">₹${c.toFixed(2)}</td><td class="c">${(g.gst/2).toFixed(1)}%</td><td class="r">₹${c.toFixed(2)}</td><td class="c">${(g.gst/2).toFixed(1)}%</td><td class="r"><b>₹${(c*2).toFixed(2)}</b></td></tr>`;
+ });
+ let copies=[{title:'ORIGINAL FOR RECIPIENT'},{title:'DUPLICATE FOR TRANSPORTER'},{title:'TRIPLICATE FOR SUPPLIER'}];
+ let html='';
+ copies.forEach(cp=>{
+  html+=`<div class="a4">
+   <div class="a4-top"><b>TAX INVOICE</b><span>${cp.title}</span></div>
+   <div class="a4-box"><div class="a4-row"><div><div class="a4-b">${gv('vName')}</div><div class="a4-meta">${gv('vAddr')}<br><br>GSTIN: <b>${gv('vGst')}</b> | ${gv('vState')} Code: ${gv('vCode')}<br>Email: ${gv('vEmail')}</div></div><div style="background:#f8fafc"><div class="a4-meta"><div style="display:flex;justify-content:space-between"><span>Invoice No:</span><b>${gv('iNo')}</b></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>Date:</span><b>${gv('iDate')}</b></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>Order:</span><b>${gv('iOrder')}</b></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>Payment:</span><b>${gv('iPay')}</b></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>Dispatch:</span><b>${gv('iDisp')}</b></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>Dest:</span><b>${gv('iDest')}</b></div></div></div></div></div>
+   <div class="a4-party"><div><div class="a4-head">Consignee (Ship To)</div><br><b>${gv('cName')||gv('bName')}</b><br>${document.getElementById('cAddr').value||gv('bAddr')}</div><div><div class="a4-head">Buyer (Bill To)</div><br><b>${gv('bName')}</b><br>${gv('bAddr')}<br><br>GSTIN: ${gv('bGst')}</div></div>
+   <table><tr><th style="width:28px">SI</th><th>Description</th><th style="width:55px">HSN/SAC</th><th style="width:35px">Qty</th><th style="width:35px">UOM</th><th style="width:65px">Rate</th><th style="width:85px">Amount</th></tr>${rows}<tr class="b"><td colspan="3" class="r">Total</td><td class="c">${totalQty}</td><td></td><td></td><td class="r">₹${total.toFixed(2)}</td></tr></table>
+   <div class="a4-total"><div><div><b style="font-size:8px;text-transform:uppercase">Amount in Words</b><br><b>INR ${inWords(grand)} Only</b></div><div style="margin-top:8px"><b style="font-size:8px;text-transform:uppercase">Tax Amount in Words</b><br>INR ${inWords(totalTax)} Only</div></div><div style="background:#f8fafc"><div style="display:flex;justify-content:space-between"><span>Taxable</span><span>₹${total.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>CGST</span><span>₹${(totalTax/2).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:5px"><span>SGST</span><span>₹${(totalTax/2).toFixed(2)}</span></div><div class="a4-grand"><span>Grand Total</span><span>₹${grand.toFixed(2)}</span></div></div></div>
+   <div style="font-size:8px;font-weight:800;background:#f8fafc;border:1px solid #000;border-bottom:none;padding:6px 10px;margin:10px 12px 0 12px;width:calc(100% - 24px)">TAX SUMMARY - HSN/SAC & GST RATE WISE</div>
+   <table><tr><th>HSN/SAC</th><th>Taxable</th><th>CGST Amt</th><th>CGST %</th><th>SGST Amt</th><th>SGST %</th><th>Total Tax</th></tr>${taxRows}<tr class="b" style="background:#f8fafc"><td>Total</td><td class="r">${total.toFixed(2)}</td><td class="r">${(totalTax/2).toFixed(2)}</td><td></td><td class="r">${(totalTax/2).toFixed(2)}</td><td></td><td class="r">₹${totalTax.toFixed(2)}</td></tr></table>
+   <div class="a4-foot"><div style="width:60%"><br><br><br><br>j<span style="background:#000;color:#fff!important;padding:2px 6px;border-radius:3px;font-size:7px">Declaration • We declare that this invoice shows actual price.</span></div><div style="text-align:right"><div>for <b>${gv('vName')}</b></div><br><br><br><div style="border-top:1px solid #000;padding-top:5px"><b>Authorised Signatory</b></div></div></div>
+  </div>`;
+ });
+ document.getElementById('printArea').innerHTML=html;
+}
+function refreshDrop(){let vs=JSON.parse(localStorage.getItem('mtb_vendors')||'[]');let bs=JSON.parse(localStorage.getItem('mtb_buyers')||'[]');if(vs.length===0){vs=[{name:vName.value,addr:vAddr.value,gst:vGst.value,code:vCode.value,state:vState.value,email:vEmail.value}];localStorage.setItem('mtb_vendors',JSON.stringify(vs))}if(bs.length===0){bs=[{name:bName.value,addr:bAddr.value,gst:bGst.value,code:bCode.value,state:bState.value}];localStorage.setItem('mtb_buyers',JSON.stringify(bs))}let vd=document.getElementById('vendorDropdown'),bd=document.getElementById('buyerDropdown');vd.innerHTML='<option value="">-- Select Vendor --</option>';bd.innerHTML='<option value="">-- Select Customer --</option>';vs.forEach((v,i)=>vd.innerHTML+=`<option value="${i}">${v.name}</option>`);bs.forEach((b,i)=>bd.innerHTML+=`<option value="${i}">${b.name}</option>`)}
+function saveParty(t){let key=t=='vendor'?'mtb_vendors':'mtb_buyers';let list=JSON.parse(localStorage.getItem(key)||'[]');let data=t=='vendor'?{name:vName.value,addr:vAddr.value,gst:vGst.value,code:vCode.value,state:vState.value,email:vEmail.value}:{name:bName.value,addr:bAddr.value,gst:bGst.value,code:bCode.value,state:bState.value};if(!data.name)return alert('Name required');list.push(data);localStorage.setItem(key,JSON.stringify(list));refreshDrop();alert(t+' Saved!')}
+function loadVendor(){let i=document.getElementById('vendorDropdown').value;if(i==='')return;let l=JSON.parse(localStorage.getItem('mtb_vendors')||'[]')[i];vName.value=l.name;vAddr.value=l.addr;vGst.value=l.gst;vCode.value=l.code;vState.value=l.state;vEmail.value=l.email||'';draw()}
+function loadBuyer(){let i=document.getElementById('buyerDropdown').value;if(i==='')return;let l=JSON.parse(localStorage.getItem('mtb_buyers')||'[]')[i];bName.value=l.name;bAddr.value=l.addr;bGst.value=l.gst;bCode.value=l.code;bState.value=l.state;copyBuyer();draw()}
+function deleteParty(t){let sel=t=='vendor'?'vendorDropdown':'buyerDropdown';let idx=document.getElementById(sel).value;if(idx==='')return alert('Select first');if(!confirm('Delete?'))return;let key=t=='vendor'?'mtb_vendors':'mtb_buyers';let list=JSON.parse(localStorage.getItem(key)||'[]');list.splice(idx,1);localStorage.setItem(key,JSON.stringify(list));refreshDrop();alert('Deleted')}
+function copyBuyer(){if(document.getElementById('sameAs').checked){cName.value=bName.value;cAddr.value=bAddr.value}draw()}
+document.getElementById('iDate').valueAsDate=new Date();document.querySelectorAll('input,textarea').forEach(e=>e.addEventListener('input',draw));renderForm();refreshDrop();draw();function render(){renderForm();draw()}
+</script>
+</body>
+</html>
